@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Admin Dashboard</h3>
+<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Username</th>
+                <th>Registered</th>
+                <th>Last Seen</th>
+                <th>Status</th>
+                <th>Approval Status</th>
+                <th>Role</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.registered_on.strftime('%Y-%m-%d') }}</td>
+                <td>{{ user.last_seen.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>
+                    {% if user.username in online_users %}
+                        🟢 Online
+                    {% else %}
+                        🔴 Offline
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_approved %}
+                        ✅ Approved
+                    {% else %}
+                        ❌ Pending Approval
+                    {% endif %}
+                </td>
+                <td>
+                    {% if user.is_admin %}
+                        <span class="badge bg-primary">Admin</span>
+                    {% else %}
+                        <span class="badge bg-secondary">User</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not user.is_approved %}
+                        <a href="{{ url_for('approve_user', user_id=user.id) }}" class="btn btn-primary btn-sm">Approve</a>
+                    {% endif %}
+                    
+                    {% if user.is_banned %}
+                        <a href="{{ url_for('unban_user', user_id=user.id) }}" class="btn btn-success btn-sm">Unban</a>
+                    {% else %}
+                        <a href="{{ url_for('ban_user', user_id=user.id) }}" class="btn btn-danger btn-sm">Ban</a>
+                    {% endif %}
+                    
+                    {% if not user.is_admin and user.id != current_user.id %}
+                        <a href="{{ url_for('make_admin', user_id=user.id) }}" class="btn btn-warning btn-sm">Make Admin</a>
+                    {% elif user.is_admin and user.id != current_user.id %}
+                        <a href="{{ url_for('remove_admin', user_id=user.id) }}" class="btn btn-secondary btn-sm">Remove Admin</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-3">
+    <a href="{{ url_for('logout') }}" class="btn btn-secondary">Logout</a>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3>User Profile</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img src="{{ url_for('static', filename='avatars/' + user.avatar) }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                            <a href="{{ url_for('upload_avatar') }}" class="btn btn-outline-primary btn-sm">Change Avatar</a>
+                        </div>
+                        <div class="col-md-8">
+                            <table class="table">
+                                <tr>
+                                    <th>Username:</th>
+                                    <td>{{ user.username }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Registered On:</th>
+                                    <td>{{ user.registered_on.strftime('%Y-%m-%d %H:%M') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Last Login:</th>
+                                    <td>{{ user.last_login.strftime('%Y-%m-%d %H:%M') if user.last_login else 'Never' }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status:</th>
+                                    <td>
+                                        {% if user.is_banned %}
+                                            <span class="badge bg-danger">Banned</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Role:</th>
+                                    <td>
+                                        {% if user.is_admin %}
+                                            <span class="badge bg-primary">Admin</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">User</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        {% if user.is_admin %}
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Admin Dashboard</a>
+                        {% endif %}
+                        <a href="{{ url_for('chat') }}" class="btn btn-success">Go to Chat</a>
+                        <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
